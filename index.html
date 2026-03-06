@@ -2,110 +2,237 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>さら's Profile ♥</title>
+    <title>さら's Heart Flight Game ♥</title>
     <style>
         body {
-            background-color: #fff0f5; /* ラベンダーブラッシュ（薄いピンク） */
-            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
             margin: 0;
             overflow: hidden;
-            color: #d02090;
+            background-color: #87CEEB; /* 空の色 */
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
-
-        /* 背景の動くハート */
-        .bg-heart {
-            position: absolute;
-            color: #ffb6c1;
-            font-size: 20px;
-            animation: float 5s infinite ease-in;
-            z-index: -1;
-            opacity: 0.6;
-        }
-
-        @keyframes float {
-            0% { transform: translateY(100vh) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
-        }
-
-        .profile-card {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 40px;
-            border-radius: 30px;
-            box-shadow: 0 10px 25px rgba(255, 182, 193, 0.5);
-            text-align: center;
-            border: 3px solid #ff69b4;
-            max-width: 400px;
+        #game-container {
             position: relative;
+            width: 400px;
+            height: 600px;
+            background: linear-gradient(to bottom, #87CEEB, #E0F7FA);
+            border: 5px solid #fff;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+            display: none; /* 最初は非表示 */
         }
-
-        h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            color: #ff1493;
+        #player {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            font-size: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            left: 50px;
+            top: 250px;
+            z-index: 10;
+            filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2));
         }
-
-        .heart-icon {
-            font-size: 50px;
-            color: #ff1493;
-            margin-bottom: 20px;
-            display: inline-block;
-            animation: pulse 1.5s infinite;
+        .obstacle {
+            position: absolute;
+            width: 50px;
+            background-color: #ff69b4;
+            border-radius: 10px;
+            right: -60px;
         }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
+        #ui {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #d02090;
+            font-weight: bold;
+            z-index: 20;
         }
-
-        p {
-            font-size: 1.2em;
-            line-height: 1.6;
+        #start-screen, #result-screen {
+            text-align: center;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
-
-        .likes {
-            margin-top: 20px;
-            padding: 10px;
-            border-top: 1px dashed #ffb6c1;
+        button {
+            padding: 10px 25px;
+            font-size: 18px;
+            background-color: #ff1493;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            transform: scale(1.1);
+            background-color: #ff69b4;
+        }
+        .goal-line {
+            position: absolute;
+            right: -100px;
+            width: 20px;
+            height: 100%;
+            background: repeating-linear-gradient(45deg, #ff1493, #ff1493 10px, #fff 10px, #fff 20px);
         }
     </style>
 </head>
 <body>
 
-    <!-- 背景にハートを散りばめるためのJavaScript -->
-    <script>
-        for (let i = 0; i < 20; i++) {
-            const heart = document.createElement('div');
-            heart.className = 'bg-heart';
-            heart.innerHTML = '♥';
-            heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
-            heart.style.delay = Math.random() * 5 + 's';
-            document.body.appendChild(heart);
-        }
-    </script>
-
-    <div class="profile-card">
-        <div class="heart-icon">♥</div>
-        <h1>さら (Sara)</h1>
-        <p>こんにちは！さらです。♥<br>
-        ハートモチーフのものが大好きです！</p>
-        
-        <div class="likes">
-            <p>♥ Favorite ♥</p>
-            <p>かわいいもの / ピンク色 / ハート</p>
-        </div>
-        
-        <div style="font-size: 24px; margin-top: 20px;">
-            ♥♥♥♥♥
-        </div>
+    <!-- スタート画面 -->
+    <div id="start-screen">
+        <h1 style="color: #ff1493;">さら's Heart Flight</h1>
+        <p>クリック（またはスペース）で<br>ハートを浮かせてゴールを目指してね！</p>
+        <button onclick="startGame()">ゲームスタート ♥</button>
     </div>
 
+    <!-- ゲーム画面 -->
+    <div id="game-container">
+        <div id="ui">進捗: <span id="progress">0</span>%</div>
+        <div id="player">ʚ♥ɞ</div>
+    </div>
+
+    <!-- 結果画面 -->
+    <div id="result-screen" style="display: none;">
+        <h1 id="result-title"></h1>
+        <p id="result-msg"></p>
+        <button onclick="location.reload()">もういちど遊ぶ ♥</button>
+    </div>
+
+    <script>
+        const container = document.getElementById('game-container');
+        const player = document.getElementById('player');
+        const progressTxt = document.getElementById('progress');
+        const startScreen = document.getElementById('start-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const resultTitle = document.getElementById('result-title');
+
+        let birdY = 250;
+        let velocity = 0;
+        let gravity = 0.4;
+        let jump = -7;
+        let isGameOver = false;
+        let obstacles = [];
+        let frameCount = 0;
+        let gameProgress = 0;
+        const goalProgress = 100; // 100までいったらゴール
+
+        function startGame() {
+            startScreen.style.display = 'none';
+            container.style.display = 'block';
+            requestAnimationFrame(update);
+        }
+
+        function update() {
+            if (isGameOver) return;
+
+            // 重力の計算
+            velocity += gravity;
+            birdY += velocity;
+            player.style.top = birdY + 'px';
+
+            // 画面外（上下）判定
+            if (birdY < 0 || birdY > 560) {
+                endGame(false);
+            }
+
+            // 障害物の生成
+            if (frameCount % 80 === 0 && gameProgress < goalProgress - 10) {
+                createObstacle();
+            }
+
+            // 障害物の移動と衝突判定
+            obstacles.forEach((obs, index) => {
+                let x = parseInt(obs.style.right);
+                x += 4;
+                obs.style.right = x + 'px';
+
+                // 衝突判定
+                let rect1 = player.getBoundingClientRect();
+                let rect2 = obs.getBoundingClientRect();
+
+                if (rect1.left < rect2.right &&
+                    rect1.right > rect2.left &&
+                    rect1.top < rect2.bottom &&
+                    rect1.bottom > rect2.top) {
+                    endGame(false);
+                }
+
+                // 画面外に出た障害物を消去
+                if (x > 450) {
+                    obs.remove();
+                    obstacles.splice(index, 1);
+                }
+            });
+
+            // ゴール判定
+            frameCount++;
+            if (frameCount % 30 === 0 && gameProgress < goalProgress) {
+                gameProgress++;
+                progressTxt.innerText = gameProgress;
+            }
+
+            if (gameProgress >= goalProgress) {
+                endGame(true);
+            } else {
+                requestAnimationFrame(update);
+            }
+        }
+
+        function createObstacle() {
+            const gap = 150;
+            const minHeight = 50;
+            const maxHeight = 300;
+            const topHeight = Math.floor(Math.random() * (maxHeight - minHeight)) + minHeight;
+
+            const topObs = document.createElement('div');
+            topObs.className = 'obstacle';
+            topObs.style.height = topHeight + 'px';
+            topObs.style.top = '0px';
+            topObs.style.right = '-60px';
+            container.appendChild(topObs);
+            obstacles.push(topObs);
+
+            const bottomObs = document.createElement('div');
+            bottomObs.className = 'obstacle';
+            bottomObs.style.height = (600 - topHeight - gap) + 'px';
+            bottomObs.style.bottom = '0px';
+            bottomObs.style.right = '-60px';
+            container.appendChild(bottomObs);
+            obstacles.push(bottomObs);
+        }
+
+        function endGame(isWin) {
+            isGameOver = true;
+            container.style.display = 'none';
+            resultScreen.style.display = 'block';
+            if (isWin) {
+                resultTitle.innerText = "ゴールおめでとう！ ♥";
+                resultTitle.style.color = "#ff1493";
+                document.getElementById('result-msg').innerText = "さらさんは空飛ぶ天才ですね！";
+            } else {
+                resultTitle.innerText = "ゲームオーバー";
+                resultTitle.style.color = "#555";
+                document.getElementById('result-msg').innerText = "また挑戦してみてね！";
+            }
+        }
+
+        // 操作設定
+        const handleAction = (e) => {
+            if (!isGameOver) velocity = jump;
+        };
+
+        window.addEventListener('keydown', (e) => { if(e.code === 'Space') handleAction(); });
+        window.addEventListener('mousedown', handleAction);
+        window.addEventListener('touchstart', handleAction);
+    </script>
 </body>
 </html>
-
 
