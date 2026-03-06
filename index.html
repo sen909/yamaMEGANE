@@ -1,17 +1,111 @@
-# ♡♡♡ プロフィール ♡♡♡
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>さら's Profile ♥</title>
+    <style>
+        body {
+            background-color: #fff0f5; /* ラベンダーブラッシュ（薄いピンク） */
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            color: #d02090;
+        }
 
-class Yamada:
-    def __init__(self):
-        self.name = "山田"
-        self.love = "ハート ❤️"
-        self.energy = "💖💖💖"
+        /* 背景の動くハート */
+        .bg-heart {
+            position: absolute;
+            color: #ffb6c1;
+            font-size: 20px;
+            animation: float 5s infinite ease-in;
+            z-index: -1;
+            opacity: 0.6;
+        }
 
-    def introduce(self):
-        print(f"✨ はじめまして！{self.name}です！ ✨")
-        print(f"好きなものは... {self.love} です！(๑>◡<๑)")
-        print(f"どうぞよろしくお願いします！ {self.energy}")
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
 
-# 自己紹介を実行！
-me = Yamada()
-me.introduce()
+        .profile-card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 10px 25px rgba(255, 182, 193, 0.5);
+            text-align: center;
+            border: 3px solid #ff69b4;
+            max-width: 400px;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #ff1493;
+        }
+
+        .heart-icon {
+            font-size: 50px;
+            color: #ff1493;
+            margin-bottom: 20px;
+            display: inline-block;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        p {
+            font-size: 1.2em;
+            line-height: 1.6;
+        }
+
+        .likes {
+            margin-top: 20px;
+            padding: 10px;
+            border-top: 1px dashed #ffb6c1;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 背景にハートを散りばめるためのJavaScript -->
+    <script>
+        for (let i = 0; i < 20; i++) {
+            const heart = document.createElement('div');
+            heart.className = 'bg-heart';
+            heart.innerHTML = '♥';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            heart.style.delay = Math.random() * 5 + 's';
+            document.body.appendChild(heart);
+        }
+    </script>
+
+    <div class="profile-card">
+        <div class="heart-icon">♥</div>
+        <h1>さら (Sara)</h1>
+        <p>こんにちは！さらです。♥<br>
+        ハートモチーフのものが大好きです！</p>
+        
+        <div class="likes">
+            <p>♥ Favorite ♥</p>
+            <p>かわいいもの / ピンク色 / ハート</p>
+        </div>
+        
+        <div style="font-size: 24px; margin-top: 20px;">
+            ♥♥♥♥♥
+        </div>
+    </div>
+
+</body>
+</html>
+
 
